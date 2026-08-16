@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(cp .env.example .env)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(rm .env)",
+      "Bash(rm -rf dist)"
+    ]
+  }
+}
