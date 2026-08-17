@@ -45,11 +45,7 @@ export default function AdminCaissesList() {
     setDeletingId(null)
 
     if (rpcError) {
-      if (rpcError.message.includes('HAS_VOTES')) {
-        setError(`"${caisse.nom}" a déjà des votes, impossible de la supprimer.`)
-      } else {
-        setError('La suppression a échoué, réessaie.')
-      }
+      setError('La suppression a échoué, réessaie.')
       return
     }
 
@@ -70,6 +66,10 @@ export default function AdminCaissesList() {
       </div>
 
       {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
+
+      <p style={{ fontSize: '0.78rem', color: 'var(--ink-muted)', marginTop: 0, marginBottom: 12 }}>
+        Supprimer une caisse supprime aussi définitivement ses votes.
+      </p>
 
       {loading ? (
         <span className="spinner" />

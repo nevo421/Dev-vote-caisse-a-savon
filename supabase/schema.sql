@@ -25,9 +25,15 @@ alter table caisses add column if not exists pilotes text;
 create table if not exists votes (
   id uuid primary key default gen_random_uuid(),
   email text not null unique check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
-  caisse_id uuid not null references caisses(id) on delete restrict,
+  caisse_id uuid not null references caisses(id) on delete cascade,
   created_at timestamptz not null default now()
 );
+
+-- Si la table existait déjà avec l'ancienne contrainte (on delete restrict),
+-- la remplacer pour autoriser la suppression en cascade des votes.
+alter table votes drop constraint if exists votes_caisse_id_fkey;
+alter table votes add constraint votes_caisse_id_fkey
+  foreign key (caisse_id) references caisses(id) on delete cascade;
 
 create index if not exists votes_caisse_id_idx on votes (caisse_id);
 
@@ -130,8 +136,8 @@ end;
 $$;
 
 -- ---------------------------------------------------------
--- RPC : supprimer une caisse (admin uniquement). Refuse si la caisse
--- a déjà des votes, pour ne jamais perdre de données silencieusement.
+-- RPC : supprimer une caisse (admin uniquement). Supprime aussi
+-- ses votes (cascade) : les votants concernés pourront revoter.
 -- ---------------------------------------------------------
 create or replace function admin_delete_caisse(p_caisse_id uuid)
 returns void
@@ -145,9 +151,6 @@ begin
   end if;
 
   delete from caisses where id = p_caisse_id;
-exception
-  when foreign_key_violation then
-    raise exception 'HAS_VOTES';
 end;
 $$;
 
