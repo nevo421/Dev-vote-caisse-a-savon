@@ -35,6 +35,7 @@ alter table caisses enable row level security;
 alter table votes enable row level security;
 
 -- Lecture publique des caisses (nom, description, image) uniquement.
+drop policy if exists "public read caisses" on caisses;
 create policy "public read caisses" on caisses
   for select using (true);
 
