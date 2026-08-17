@@ -8,7 +8,8 @@ export default function AdminAddCaisse() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -53,7 +54,8 @@ export default function AdminAddCaisse() {
       setNom('')
       setPilotes('')
       setFile(null)
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      if (cameraInputRef.current) cameraInputRef.current.value = ''
+      if (galleryInputRef.current) galleryInputRef.current.value = ''
       setSuccess(true)
     } catch {
       setError("La caisse n'a pas pu être ajoutée, réessaie.")
@@ -89,13 +91,47 @@ export default function AdminAddCaisse() {
       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 6 }}>
         Photo (optionnel)
       </label>
+
       <input
         type="file"
         accept="image/*"
-        ref={fileInputRef}
+        capture="environment"
+        ref={cameraInputRef}
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        style={{ marginBottom: 12, width: '100%' }}
+        style={{ display: 'none' }}
       />
+      <input
+        type="file"
+        accept="image/*"
+        ref={galleryInputRef}
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        style={{ display: 'none' }}
+      />
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          style={{ fontSize: '0.85rem', padding: '10px 12px' }}
+          onClick={() => cameraInputRef.current?.click()}
+        >
+          📷 Prendre une photo
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          style={{ fontSize: '0.85rem', padding: '10px 12px' }}
+          onClick={() => galleryInputRef.current?.click()}
+        >
+          🖼️ Choisir une photo
+        </button>
+      </div>
+
+      {file && (
+        <p style={{ fontSize: '0.8rem', color: 'var(--ink-muted)', marginTop: -6, marginBottom: 12 }}>
+          {file.name}
+        </p>
+      )}
 
       {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
       {success && (
