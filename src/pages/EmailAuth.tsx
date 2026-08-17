@@ -1,14 +1,12 @@
 import { useState, FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { isValidEmail, normalizeEmail } from '../lib/email'
-import { setSessionEmail } from '../lib/session'
 
 export default function EmailAuth() {
-  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -23,19 +21,27 @@ export default function EmailAuth() {
 
     setLoading(true)
     try {
-      const { data, error: rpcError } = await supabase.rpc('has_voted', {
+      const { data: alreadyVoted, error: checkError } = await supabase.rpc('has_voted', {
         p_email: normalized,
       })
 
-      if (rpcError) throw rpcError
+      if (checkError) throw checkError
 
-      if (data === true) {
+      if (alreadyVoted === true) {
         setError('Tu as déjà voté !')
         return
       }
 
-      setSessionEmail(normalized)
-      navigate('/vote')
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email: normalized,
+        options: {
+          emailRedirectTo: `${window.location.origin}/vote`,
+        },
+      })
+
+      if (otpError) throw otpError
+
+      setSent(true)
     } catch {
       setError("Une erreur est survenue, réessaie dans un instant.")
     } finally {
@@ -43,10 +49,22 @@ export default function EmailAuth() {
     }
   }
 
+  if (sent) {
+    return (
+      <div className="page">
+        <div className="success-icon">📩</div>
+        <h1>Vérifie ta boîte mail</h1>
+        <p className="subtitle">
+          On t'a envoyé un lien à <strong>{normalizeEmail(email)}</strong>. Clique dessus pour accéder au vote.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="page">
       <h1>Ton adresse email</h1>
-      <p className="subtitle">Elle sert uniquement à s'assurer d'un seul vote par personne</p>
+      <p className="subtitle">On t'envoie un lien pour confirmer que c'est bien la tienne, et s'assurer d'un seul vote par personne</p>
 
       <form className="card" onSubmit={handleSubmit}>
         <input
@@ -61,7 +79,7 @@ export default function EmailAuth() {
         {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
 
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? <span className="spinner" /> : 'Continuer'}
+          {loading ? <span className="spinner" /> : 'Recevoir le lien'}
         </button>
       </form>
     </div>

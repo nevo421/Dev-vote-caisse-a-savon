@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase, Caisse } from '../lib/supabase'
-import { getSessionEmail } from '../lib/session'
 
 export default function Vote() {
   const navigate = useNavigate()
-  const [email] = useState(() => getSessionEmail())
+  const [email, setEmail] = useState<string | null | undefined>(undefined)
   const [caisses, setCaisses] = useState<Caisse[]>([])
   const [loading, setLoading] = useState(true)
   const [votingId, setVotingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (email === undefined) return
+
     if (!email) {
       navigate('/auth', { replace: true })
       return
@@ -37,7 +44,6 @@ export default function Vote() {
     setVotingId(caisse.id)
 
     const { error: rpcError } = await supabase.rpc('cast_vote', {
-      p_email: email,
       p_caisse_id: caisse.id,
     })
 
@@ -51,6 +57,7 @@ export default function Vote() {
       return
     }
 
+    await supabase.auth.signOut()
     navigate('/confirmation', { state: { caisseNom: caisse.nom } })
   }
 

@@ -45,7 +45,8 @@ create policy "public read caisses" on caisses
 -- façon atomique (important avec ~500 votants simultanés).
 
 -- ---------------------------------------------------------
--- RPC : un email a-t-il déjà voté ?
+-- RPC : un email a-t-il déjà voté ? (accessible sans authentification,
+-- juste pour éviter d'envoyer un magic link à quelqu'un qui a déjà voté)
 -- ---------------------------------------------------------
 create or replace function has_voted(p_email text)
 returns boolean
@@ -57,16 +58,25 @@ as $$
 $$;
 
 -- ---------------------------------------------------------
--- RPC : enregistrer un vote (atomique, protégé par la contrainte unique)
+-- RPC : enregistrer un vote pour l'utilisateur AUTHENTIFIÉ (magic link)
+-- L'email vient du JWT vérifié par Supabase Auth, jamais d'un
+-- paramètre fourni par le client : impossible de voter au nom d'un
+-- email qu'on ne possède pas.
 -- ---------------------------------------------------------
-create or replace function cast_vote(p_email text, p_caisse_id uuid)
+create or replace function cast_vote(p_caisse_id uuid)
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  v_email text := lower(auth.jwt() ->> 'email');
 begin
-  insert into votes (email, caisse_id) values (lower(p_email), p_caisse_id);
+  if v_email is null then
+    raise exception 'NOT_AUTHENTICATED';
+  end if;
+
+  insert into votes (email, caisse_id) values (v_email, p_caisse_id);
 exception
   when unique_violation then
     raise exception 'ALREADY_VOTED';
@@ -90,7 +100,7 @@ as $$
 $$;
 
 grant execute on function has_voted(text) to anon, authenticated;
-grant execute on function cast_vote(text, uuid) to anon, authenticated;
+grant execute on function cast_vote(uuid) to authenticated;
 grant execute on function get_vote_counts() to anon, authenticated;
 
 -- ---------------------------------------------------------

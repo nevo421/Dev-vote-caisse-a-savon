@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { clearSession } from '../lib/session'
 
 export default function Confirmation() {
   const navigate = useNavigate()
@@ -7,7 +6,6 @@ export default function Confirmation() {
   const caisseNom = (location.state as { caisseNom?: string } | null)?.caisseNom
 
   function handleReturn() {
-    clearSession()
     navigate('/', { replace: true })
   }
 
