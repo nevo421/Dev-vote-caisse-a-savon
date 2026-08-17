@@ -6,6 +6,7 @@ import Vote from './pages/Vote'
 import Confirmation from './pages/Confirmation'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Admin = lazy(() => import('./pages/Admin'))
 
 export default function App() {
   return (
@@ -20,6 +21,14 @@ export default function App() {
           element={
             <Suspense fallback={<div className="page"><span className="spinner" /></div>}>
               <Dashboard />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={<div className="page"><span className="spinner" /></div>}>
+              <Admin />
             </Suspense>
           }
         />

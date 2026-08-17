@@ -46,7 +46,14 @@ npm run dev
 - `/auth` — Saisie de l'adresse email, envoie un lien magique
 - `/vote` — Choix de la caisse (accessible uniquement en cliquant le lien reçu par email)
 - `/confirmation` — Message de remerciement
-- `/dashboard` — Résultats en direct (optionnel, chargé en lazy-loading)
+- `/dashboard` — Résultats en direct, public (chargé en lazy-loading)
+- `/admin` — Réservé aux emails listés dans la table `admins` (même mécanisme de lien magique). Permet d'ajouter des caisses (nom, pilotes, photo) le jour J, et de consulter/exporter les résultats en CSV.
+
+### Ajouter un administrateur
+
+```sql
+insert into admins (email) values ('email@exemple.fr');
+```
 
 ## 4. Déploiement (Vercel ou Netlify, gratuit)
 

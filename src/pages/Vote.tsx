@@ -27,7 +27,7 @@ export default function Vote() {
 
     supabase
       .from('caisses')
-      .select('id, nom, description, image_url')
+      .select('id, nom, description, pilotes, image_url')
       .order('nom', { ascending: true })
       .then(({ data, error: fetchError }) => {
         if (fetchError) {
@@ -89,6 +89,11 @@ export default function Vote() {
               </div>
               <div className="caisse-body">
                 <h3>{caisse.nom}</h3>
+                {caisse.pilotes && (
+                  <p style={{ color: 'var(--ink)', fontWeight: 700, fontSize: '0.8rem', margin: 0 }}>
+                    🏎️ {caisse.pilotes}
+                  </p>
+                )}
                 {caisse.description && <p>{caisse.description}</p>}
                 <button
                   className="btn"
