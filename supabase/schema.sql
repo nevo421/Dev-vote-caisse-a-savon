@@ -130,6 +130,28 @@ end;
 $$;
 
 -- ---------------------------------------------------------
+-- RPC : supprimer une caisse (admin uniquement). Refuse si la caisse
+-- a déjà des votes, pour ne jamais perdre de données silencieusement.
+-- ---------------------------------------------------------
+create or replace function admin_delete_caisse(p_caisse_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not is_admin() then
+    raise exception 'NOT_ADMIN';
+  end if;
+
+  delete from caisses where id = p_caisse_id;
+exception
+  when foreign_key_violation then
+    raise exception 'HAS_VOTES';
+end;
+$$;
+
+-- ---------------------------------------------------------
 -- RPC : résultats agrégés (aucun email exposé)
 -- ---------------------------------------------------------
 drop function if exists get_vote_counts();
@@ -150,6 +172,7 @@ grant execute on function is_admin() to authenticated;
 grant execute on function has_voted(text) to anon, authenticated;
 grant execute on function cast_vote(uuid) to authenticated;
 grant execute on function admin_add_caisse(text, text, text) to authenticated;
+grant execute on function admin_delete_caisse(uuid) to authenticated;
 grant execute on function get_vote_counts() to anon, authenticated;
 
 -- ---------------------------------------------------------

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { isValidEmail, normalizeEmail } from '../lib/email'
 import AdminAddCaisse from '../components/AdminAddCaisse'
 import AdminResults from '../components/AdminResults'
+import AdminCaissesList from '../components/AdminCaissesList'
 
 type Status = 'loading' | 'anon' | 'sent' | 'denied' | 'admin'
 
@@ -11,7 +12,7 @@ export default function Admin() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [tab, setTab] = useState<'add' | 'results'>('add')
+  const [tab, setTab] = useState<'add' | 'caisses' | 'results'>('add')
 
   useEffect(() => {
     checkAccess()
@@ -118,22 +119,33 @@ export default function Admin() {
     <div className="page">
       <h1>Espace admin</h1>
 
-      <div style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 420 }}>
+      <div style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 420, flexWrap: 'wrap' }}>
         <button
           className={tab === 'add' ? 'btn' : 'btn btn-secondary'}
+          style={{ width: 'auto', flex: '1 1 auto', padding: '10px 14px', fontSize: '0.85rem' }}
           onClick={() => setTab('add')}
         >
-          Ajouter une caisse
+          Ajouter
+        </button>
+        <button
+          className={tab === 'caisses' ? 'btn' : 'btn btn-secondary'}
+          style={{ width: 'auto', flex: '1 1 auto', padding: '10px 14px', fontSize: '0.85rem' }}
+          onClick={() => setTab('caisses')}
+        >
+          Caisses
         </button>
         <button
           className={tab === 'results' ? 'btn' : 'btn btn-secondary'}
+          style={{ width: 'auto', flex: '1 1 auto', padding: '10px 14px', fontSize: '0.85rem' }}
           onClick={() => setTab('results')}
         >
           Résultats
         </button>
       </div>
 
-      {tab === 'add' ? <AdminAddCaisse /> : <AdminResults />}
+      {tab === 'add' && <AdminAddCaisse />}
+      {tab === 'caisses' && <AdminCaissesList />}
+      {tab === 'results' && <AdminResults />}
 
       <button className="btn btn-secondary" style={{ maxWidth: 420, marginTop: 8 }} onClick={handleSignOut}>
         Se déconnecter
