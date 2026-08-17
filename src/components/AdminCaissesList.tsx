@@ -56,15 +56,24 @@ export default function AdminCaissesList() {
     setCaisses((prev) => prev.filter((c) => c.id !== caisse.id))
   }
 
-  if (loading) {
-    return <span className="spinner" />
-  }
-
   return (
     <div style={{ width: '100%', maxWidth: 420 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+        <button
+          className="btn"
+          style={{ width: 'auto', padding: '8px 16px', fontSize: '0.85rem' }}
+          onClick={load}
+          disabled={loading}
+        >
+          Rafraîchir
+        </button>
+      </div>
+
       {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
 
-      {caisses.length === 0 ? (
+      {loading ? (
+        <span className="spinner" />
+      ) : caisses.length === 0 ? (
         <p className="subtitle">Aucune caisse pour l'instant.</p>
       ) : (
         <div className="results-list">
