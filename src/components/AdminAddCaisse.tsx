@@ -92,6 +92,7 @@ export default function AdminAddCaisse() {
       <input
         type="file"
         accept="image/*"
+        capture="environment"
         ref={fileInputRef}
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
         style={{ marginBottom: 12, width: '100%' }}
