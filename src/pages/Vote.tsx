@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase, Caisse } from '../lib/supabase'
+import { KartIcon, accentForIndex } from '../components/KartIcon'
 
 export default function Vote() {
   const navigate = useNavigate()
@@ -75,20 +76,31 @@ export default function Vote() {
       {error && <div className="error">{error}</div>}
 
       <div className="caisses-grid">
-        {caisses.map((caisse) => (
-          <div className="caisse-card" key={caisse.id}>
-            {caisse.image_url && <img src={caisse.image_url} alt={caisse.nom} />}
-            <h3>{caisse.nom}</h3>
-            {caisse.description && <p>{caisse.description}</p>}
-            <button
-              className="btn"
-              disabled={votingId !== null}
-              onClick={() => handleVote(caisse)}
-            >
-              {votingId === caisse.id ? <span className="spinner" /> : 'Voter'}
-            </button>
-          </div>
-        ))}
+        {caisses.map((caisse, index) => {
+          const accent = accentForIndex(index)
+          return (
+            <div className="caisse-card" key={caisse.id}>
+              <div className="caisse-img" style={{ background: accent.tint }}>
+                {caisse.image_url ? (
+                  <img src={caisse.image_url} alt={caisse.nom} />
+                ) : (
+                  <KartIcon color={accent.fg} />
+                )}
+              </div>
+              <div className="caisse-body">
+                <h3>{caisse.nom}</h3>
+                {caisse.description && <p>{caisse.description}</p>}
+                <button
+                  className="btn"
+                  disabled={votingId !== null}
+                  onClick={() => handleVote(caisse)}
+                >
+                  {votingId === caisse.id ? <span className="spinner" /> : 'Voter'}
+                </button>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

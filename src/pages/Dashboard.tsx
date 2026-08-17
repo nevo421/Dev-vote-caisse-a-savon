@@ -56,11 +56,11 @@ export default function Dashboard() {
           <div style={{ width: '100%', maxWidth: 600, height: 320 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={counts} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="nom" tick={{ fontSize: 12 }} />
-                <YAxis allowDecimals={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f2e7ce" />
+                <XAxis dataKey="nom" tick={{ fontSize: 12, fill: '#6b6f8a' }} />
+                <YAxis allowDecimals={false} tick={{ fill: '#6b6f8a' }} />
                 <Tooltip />
-                <Bar dataKey="votes" fill="#1d4ed8" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="votes" fill="#e8472b" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

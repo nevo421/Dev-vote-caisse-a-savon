@@ -7,7 +7,8 @@ export default function Home() {
 
   return (
     <div className="page">
-      <h1>🏁 Vote - Caisses à Savon</h1>
+      <span className="badge">🏁 Édition {new Date().getFullYear()}</span>
+      <h1>Vote - Caisses à Savon</h1>
       <p className="subtitle">Scanne le QR code ou clique pour voter pour ta caisse préférée</p>
 
       <div className="qr-wrap">

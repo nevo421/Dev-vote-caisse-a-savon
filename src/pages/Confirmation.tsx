@@ -11,7 +11,11 @@ export default function Confirmation() {
 
   return (
     <div className="page">
-      <div className="success-icon">✅</div>
+      <div className="stamp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow-ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      </div>
       <h1>Merci pour ton vote !</h1>
       {caisseNom && <p className="subtitle">Tu as voté pour : <strong>{caisseNom}</strong></p>}
 
