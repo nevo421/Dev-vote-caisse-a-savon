@@ -1,15 +1,16 @@
 import { useEffect, useState, FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
-import { isValidEmail, normalizeEmail } from '../lib/email'
+import { normalizeEmail } from '../lib/email'
 import AdminAddCaisse from '../components/AdminAddCaisse'
 import AdminResults from '../components/AdminResults'
 import AdminCaissesList from '../components/AdminCaissesList'
 
-type Status = 'loading' | 'anon' | 'sent' | 'denied' | 'admin'
+type Status = 'loading' | 'anon' | 'denied' | 'admin'
 
 export default function Admin() {
   const [status, setStatus] = useState<Status>('loading')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [tab, setTab] = useState<'add' | 'caisses' | 'results'>('add')
@@ -33,23 +34,24 @@ export default function Admin() {
     setError(null)
 
     const normalized = normalizeEmail(email)
-    if (!isValidEmail(normalized)) {
-      setError('Adresse email invalide.')
+    if (!normalized || !password) {
+      setError('Email et mot de passe obligatoires.')
       return
     }
 
     setSubmitting(true)
-    const { error: otpError } = await supabase.auth.signInWithOtp({
+    const { error: authError } = await supabase.auth.signInWithPassword({
       email: normalized,
-      options: { emailRedirectTo: `${window.location.origin}/admin` },
+      password,
     })
     setSubmitting(false)
 
-    if (otpError) {
-      setError('Une erreur est survenue, réessaie dans un instant.')
+    if (authError) {
+      setError('Identifiants incorrects.')
       return
     }
-    setStatus('sent')
+
+    checkAccess()
   }
 
   async function handleSignOut() {
@@ -61,18 +63,6 @@ export default function Admin() {
     return (
       <div className="page">
         <span className="spinner" />
-      </div>
-    )
-  }
-
-  if (status === 'sent') {
-    return (
-      <div className="page">
-        <div className="success-icon">📩</div>
-        <h1>Vérifie ta boîte mail</h1>
-        <p className="subtitle">
-          On t'a envoyé un lien à <strong>{normalizeEmail(email)}</strong> pour accéder à l'admin.
-        </p>
       </div>
     )
   }
@@ -93,7 +83,7 @@ export default function Admin() {
     return (
       <div className="page">
         <h1>Espace admin</h1>
-        <p className="subtitle">Connecte-toi avec ton adresse email autorisée</p>
+        <p className="subtitle">Connexion par mot de passe (aucun email envoyé)</p>
 
         <form className="card" onSubmit={handleSubmit}>
           <input
@@ -103,12 +93,19 @@ export default function Admin() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoFocus
+            style={{ marginBottom: 12 }}
+          />
+          <input
+            type="password"
+            placeholder="Mot de passe"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           {error && <div className="error" style={{ marginBottom: 12 }}>{error}</div>}
 
           <button className="btn" type="submit" disabled={submitting}>
-            {submitting ? <span className="spinner" /> : 'Recevoir le lien'}
+            {submitting ? <span className="spinner" /> : 'Se connecter'}
           </button>
         </form>
       </div>
