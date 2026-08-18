@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, Caisse } from '../lib/supabase'
+import { supabase, Caisse, byNumero } from '../lib/supabase'
 import { KartIcon, accentForIndex } from '../components/KartIcon'
 
 export default function Vote() {
@@ -28,12 +28,11 @@ export default function Vote() {
     supabase
       .from('caisses')
       .select('id, nom, description, pilotes, image_url')
-      .order('nom', { ascending: true })
       .then(({ data, error: fetchError }) => {
         if (fetchError) {
           setError('Impossible de charger les caisses. Recharge la page.')
         } else {
-          setCaisses(data ?? [])
+          setCaisses((data ?? []).slice().sort(byNumero))
         }
         setLoading(false)
       })

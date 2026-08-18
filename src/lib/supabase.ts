@@ -25,3 +25,8 @@ export type VoteCount = {
   pilotes: string | null
   votes: number
 }
+
+/** `nom` est stocké en texte mais contient un numéro : tri numérique, pas alphabétique. */
+export function byNumero<T extends { nom: string }>(a: T, b: T): number {
+  return Number(a.nom) - Number(b.nom)
+}

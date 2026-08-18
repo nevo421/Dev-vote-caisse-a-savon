@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase, Caisse } from '../lib/supabase'
+import { supabase, Caisse, byNumero } from '../lib/supabase'
 
 export default function AdminCaissesList() {
   const [caisses, setCaisses] = useState<Caisse[]>([])
@@ -13,12 +13,11 @@ export default function AdminCaissesList() {
     const { data, error: fetchError } = await supabase
       .from('caisses')
       .select('id, nom, description, pilotes, image_url')
-      .order('nom', { ascending: true })
 
     if (fetchError) {
       setError('Impossible de charger les caisses.')
     } else {
-      setCaisses(data ?? [])
+      setCaisses((data ?? []).slice().sort(byNumero))
       setError(null)
     }
     setLoading(false)
