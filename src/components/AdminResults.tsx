@@ -3,7 +3,7 @@ import { supabase, VoteCount } from '../lib/supabase'
 
 function exportCsv(counts: VoteCount[]) {
   const escape = (value: string) => `"${value.replace(/"/g, '""')}"`
-  const header = 'Caisse,Pilotes,Votes\n'
+  const header = 'Numéro,Pilotes,Votes\n'
   const rows = counts
     .map((c) => `${escape(c.nom)},${escape(c.pilotes ?? '')},${c.votes}`)
     .join('\n')
@@ -67,7 +67,7 @@ export default function AdminResults() {
                 <div>
                   <div>
                     {i === 0 && c.votes > 0 ? '🥇 ' : ''}
-                    <strong>{c.nom}</strong>
+                    <strong>N° {c.nom}</strong>
                   </div>
                   {c.pilotes && (
                     <div style={{ fontSize: '0.8rem', color: 'var(--ink-muted)' }}>{c.pilotes}</div>

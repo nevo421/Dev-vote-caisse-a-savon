@@ -17,7 +17,7 @@ export default function Confirmation() {
         </svg>
       </div>
       <h1>Merci pour ton vote !</h1>
-      {caisseNom && <p className="subtitle">Tu as voté pour : <strong>{caisseNom}</strong></p>}
+      {caisseNom && <p className="subtitle">Tu as voté pour la caisse <strong>N° {caisseNom}</strong></p>}
 
       <button className="btn btn-secondary" onClick={handleReturn} style={{ maxWidth: 420 }}>
         Retour à l'accueil

@@ -17,7 +17,11 @@ export default function AdminAddCaisse() {
     setSuccess(false)
 
     if (!nom.trim()) {
-      setError('Le nom de la caisse est obligatoire.')
+      setError('Le numéro de la caisse est obligatoire.')
+      return
+    }
+    if (!/^\d+$/.test(nom.trim())) {
+      setError('Le numéro doit être composé uniquement de chiffres.')
       return
     }
 
@@ -44,7 +48,7 @@ export default function AdminAddCaisse() {
 
       if (rpcError) {
         if (rpcError.message.includes('duplicate') || rpcError.code === '23505') {
-          setError('Une caisse avec ce nom existe déjà.')
+          setError('Une caisse avec ce numéro existe déjà.')
         } else {
           setError("La caisse n'a pas pu être ajoutée, réessaie.")
         }
@@ -67,11 +71,12 @@ export default function AdminAddCaisse() {
   return (
     <form className="card" onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 6 }}>
-        Nom de la caisse
+        Numéro de la caisse
       </label>
       <input
-        type="text"
-        placeholder="Les Furieux"
+        type="number"
+        inputMode="numeric"
+        placeholder="12"
         value={nom}
         onChange={(e) => setNom(e.target.value)}
         style={{ textAlign: 'left' }}

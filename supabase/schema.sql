@@ -200,7 +200,7 @@ create policy "admin upload caisse photos" on storage.objects
 -- ou à ajouter le jour J depuis /admin)
 -- ---------------------------------------------------------
 insert into caisses (nom, description) values
-  ('Caisse A', 'Description de la caisse A'),
-  ('Caisse B', 'Description de la caisse B'),
-  ('Caisse C', 'Description de la caisse C')
+  ('1', 'Description de la caisse n°1'),
+  ('2', 'Description de la caisse n°2'),
+  ('3', 'Description de la caisse n°3')
 on conflict (nom) do nothing;

@@ -82,13 +82,13 @@ export default function Vote() {
             <div className="caisse-card" key={caisse.id}>
               <div className="caisse-img" style={{ background: accent.tint }}>
                 {caisse.image_url ? (
-                  <img src={caisse.image_url} alt={caisse.nom} />
+                  <img src={caisse.image_url} alt={`Caisse n°${caisse.nom}`} />
                 ) : (
                   <KartIcon color={accent.fg} />
                 )}
               </div>
               <div className="caisse-body">
-                <h3>{caisse.nom}</h3>
+                <h3>N° {caisse.nom}</h3>
                 {caisse.pilotes && (
                   <p style={{ color: 'var(--ink)', fontWeight: 700, fontSize: '0.8rem', margin: 0 }}>
                     🏎️ {caisse.pilotes}

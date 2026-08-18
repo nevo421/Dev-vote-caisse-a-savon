@@ -80,7 +80,7 @@ export default function AdminCaissesList() {
           {caisses.map((caisse) => (
             <div className="results-row" key={caisse.id} style={{ alignItems: 'center' }}>
               <div style={{ textAlign: 'left' }}>
-                <strong>{caisse.nom}</strong>
+                <strong>N° {caisse.nom}</strong>
                 {caisse.pilotes && (
                   <div style={{ fontSize: '0.8rem', color: 'var(--ink-muted)' }}>{caisse.pilotes}</div>
                 )}

@@ -57,7 +57,11 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={counts} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f2e7ce" />
-                <XAxis dataKey="nom" tick={{ fontSize: 12, fill: '#6b6f8a' }} />
+                <XAxis
+                  dataKey="nom"
+                  tick={{ fontSize: 12, fill: '#6b6f8a' }}
+                  tickFormatter={(value) => `N° ${value}`}
+                />
                 <YAxis allowDecimals={false} tick={{ fill: '#6b6f8a' }} />
                 <Tooltip />
                 <Bar dataKey="votes" fill="#e8472b" radius={[6, 6, 0, 0]} />
@@ -70,7 +74,7 @@ export default function Dashboard() {
               <div className="results-row" key={c.caisse_id}>
                 <span>
                   {i === 0 && c.votes > 0 ? '🥇 ' : ''}
-                  {c.nom}
+                  N° {c.nom}
                 </span>
                 <strong>{c.votes}</strong>
               </div>
